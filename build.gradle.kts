@@ -1,4 +1,3 @@
-import org.gradle.process.internal.JvmOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
@@ -18,7 +17,7 @@ plugins {
 }
 
 group = "me.lightless.burp"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.0"
 
 val ktorServerVersion = "2.3.2"
 val exposedVersion = "0.41.1"
