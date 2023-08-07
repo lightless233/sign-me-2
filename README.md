@@ -4,6 +4,8 @@
 ## 1. 介绍
 SignMe2 是一款 Burp 插件，设计初衷是为了方便用户专注于各种安全测试，而不用关心各种签名算法的编程细节。用户可以使用 Javascript 编写签名算法，在 Burp 发起请求时自动计算签名值并对参数进行修改，为安全测试提供便利。
 
+详细介绍：[https://lightless.me/archives/burp-sign-me.html](https://lightless.me/archives/burp-sign-me.html)
+
 > 为什么是 SignMe2？ SignMe1 去哪里了？
 > 
 > SignMe1 是很久以前自己做安全测试时开发的小工具，由于是个人使用，所以代码非常混乱，且逻辑不清。
