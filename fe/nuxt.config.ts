@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import {defineNuxtConfig} from "nuxt/config";
 
+// noinspection HttpUrlsUsage
 export default defineNuxtConfig({
   devtools: {enabled: true},
   modules: [

@@ -25,9 +25,15 @@ fun Application.defaultModule() {
     install(CORS) {
         allowCredentials = true
         allowMethod(HttpMethod.Options)
+        allowHeader(HttpHeaders.ContentType)
+
+        // for local develop
         allowHost("127.0.0.1:3000")
         allowHost("localhost:3000")
-        allowHeader(HttpHeaders.ContentType)
+
+        // for product
+        allowHost("127.0.0.1:3336")
+        allowHost("localhost:3336")
     }
     install(ContentNegotiation) {
         jackson()
