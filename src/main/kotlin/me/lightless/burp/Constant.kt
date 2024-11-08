@@ -1,6 +1,6 @@
 package me.lightless.burp
 
-const val VERSION = "1.0.0"
+const val VERSION = "1.1.0"
 
 /**
  * Burp Parameter Location Constant
@@ -79,12 +79,15 @@ enum class ToolFlag(val value: Int) {
 }
 
 /**
+ * PARAM_JSON/PARAM_XML/PARAM_XML_ATTR/PARAM_MULTIPART_ATTR 不被 BurpAPI 支持，因此需要自行处理
+ *   0 - 原始，用于 PARAM_JSON/PARAM_XML/PARAM_XML_ATTR/PARAM_MULTIPART_ATTR 类型，替换整个 body 为指定内容
  *   1 - 追加，如果参数不存在则新增，如果参数存在则什么都不做
  *   2 - 更新，如果参数不存在则什么都不做，如果参数存在则更新参数值
  *   3 - 覆盖，如果参数存在，则更新参数值，如果参数不存在，则新增该参数
  *   4 - 删除，移除指定参数
  */
 enum class EditAction(val value: Int) {
+    RAW(0),
     ADD(1),
     UPDATE(2),
     OVERRIDE(3),

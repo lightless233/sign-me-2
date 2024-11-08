@@ -39,6 +39,7 @@ class JsRuleExecutor : IExecutor {
         
         // 操作类型
         const EditAction = {
+            RAW: 0,
             ADD: 1,
             UPDATE: 2,
             OVERRIDE: 3,
