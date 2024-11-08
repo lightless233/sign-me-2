@@ -106,6 +106,8 @@ class HTTPListener(private val callbacks: IBurpExtenderCallbacks) : IHttpListene
         val bindingCookies = mutableMapOf<String, String>()
 
         bindings["request"] = bindingRequest
+        bindingRequest["rawRequest"] = rawRequest.toString(Charsets.UTF_8)
+        bindingRequest["body"] = rawRequest.copyOfRange(analyzedRequest.bodyOffset, rawRequest.size).toString(Charsets.UTF_8)
         bindingRequest["query"] = bindingQuery
         bindingRequest["headers"] = bindingHeaders
         bindingRequest["cookies"] = bindingCookies
@@ -204,14 +206,31 @@ class HTTPListener(private val callbacks: IBurpExtenderCallbacks) : IHttpListene
                                 messageInfo.request = callbacks.helpers.updateParameter(messageInfo.request, newParameter)
                             }
                         }
+                        // 替换整个 body
+                        EditAction.RAW.value -> {
+                            if (editParameter.location == ParameterType.PARAM_BODY.value) {
+                                messageInfo.request = callbacks.helpers.buildHttpMessage(analyzedRequest.headers, editParameter.value.encodeToByteArray())
+                            } else {
+                                Logger.warn("Action RAW on ${ParameterType.fromValue(editParameter.location)} not support yet.")
+                            }
+                        }
                     }
-                    Logger.debug("Parameter $editParameter process finished.")
                 }
 
-                else -> {
-                    Logger.warn("Edit parameter on ${ParameterType.fromValue(editParameter.location)} not support yet.")
+                ParameterType.PARAM_JSON.value, ParameterType.PARAM_XML.value, ParameterType.PARAM_XML_ATTR.value, ParameterType.PARAM_MULTIPART_ATTR.value -> {
+                    when (editParameter.action) {
+                        // 替换整个 body
+                        EditAction.RAW.value -> {
+                            messageInfo.request = callbacks.helpers.buildHttpMessage(analyzedRequest.headers, editParameter.value.encodeToByteArray())
+                        }
+
+                        else -> {
+                            Logger.warn("Edit ${EditAction.fromValue(editParameter.action)} on ${ParameterType.fromValue(editParameter.location)} not support yet.")
+                        }
+                    }
                 }
             }
+            Logger.debug("Parameter $editParameter process finished.")
 
             // TODO 重新分析一下，
             analyzedRequest = callbacks.helpers.analyzeRequest(messageInfo.request)
