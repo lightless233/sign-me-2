@@ -183,6 +183,9 @@ SortType = {
 **参数修改操作定义**
 ```plain
 EditAction = {
+    // 完整替换，用于 PARAM_JSON/PARAM_XML/PARAM_XML_ATTR/PARAM_MULTIPART_ATTR 类型，替换整个 body 为指定内容
+    RAW: 0
+
     // 添加新参数，如果目标位置已经存在同名参数，则不执行任何操作
     // 如果目标位置没有同名参数，则添加该参数
     ADD: 1
