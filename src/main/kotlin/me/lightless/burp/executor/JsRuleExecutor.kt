@@ -75,9 +75,9 @@ class JsRuleExecutor : IExecutor {
             
             getTimestamp: (t) => {
               if (t === 1) {
-                return (new Date().getTime()).toString();
-              } else {
                 return ((new Date().getTime()).toString()).substring(0, 10);
+              } else {
+                return (new Date().getTime()).toString();
               }
             },
             
