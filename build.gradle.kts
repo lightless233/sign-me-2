@@ -5,26 +5,28 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  */
 fun getGitCommitId(): String {
     return try {
-        Runtime.getRuntime().exec("git rev-parse --short HEAD").inputStream.reader().readText().trim()
+        Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "HEAD")).inputStream.reader().readText().trim()
+        // Runtime.getRuntime().exec("git rev-parse --short HEAD").inputStream.reader().readText().trim()
     } catch (ex: Exception) {
         "unknown"
     }
 }
 
 plugins {
-    kotlin("jvm") version "1.9.0"
-    id("com.github.johnrengelman.shadow") version "7.1.1"
+    kotlin("jvm") version "2.1.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "me.lightless.burp"
-version = "1.1.0"
+version = "1.2.0-SNAPSHOT"
 
-val ktorServerVersion = "2.3.2"
-val exposedVersion = "0.41.1"
-val graalvmVersion = "23.0.0"
+val ktorServerVersion = "3.0.3"
+val exposedVersion = "0.57.0"
+val graalvmVersion = "24.1.1"
 
 repositories {
-    maven("https://maven.aliyun.com/repository/public/")
+    // maven("https://maven.aliyun.com/repository/public/")
+    maven("https://repo.huaweicloud.com/repository/maven/")
     mavenCentral()
 }
 
@@ -42,7 +44,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-jackson-jvm:$ktorServerVersion")
 
     // logging for ktor-call-logging
-    implementation("ch.qos.logback:logback-classic:1.4.8")
+    implementation("ch.qos.logback:logback-classic:1.5.15")
 
     // ORM
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
@@ -63,7 +65,7 @@ dependencies {
 // 构建前端资源
 val feBuild = task<Exec>("feBuild") {
     workingDir("fe")
-    if (System.getProperty("os.name").toLowerCase().contains("win")) {
+    if (System.getProperty("os.name").lowercase().contains("win")) {
         commandLine(listOf("pnpm.cmd", "run", "generate"))
     } else {
         commandLine(listOf("pnpm", "run", "generate"))
@@ -80,7 +82,10 @@ val copyFeDist = task<Copy>("copyFeDist") {
 
 tasks {
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+        // kotlinOptions.jvmTarget = "1.8"
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
+        }
     }
 
     withType<JavaCompile> {

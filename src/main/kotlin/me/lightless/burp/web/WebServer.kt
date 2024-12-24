@@ -6,7 +6,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
-import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.compression.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
@@ -17,7 +17,7 @@ import me.lightless.burp.web.controller.signRuleRoutes
 fun startWebServer(wait: Boolean): NettyApplicationEngine {
     val httpServer = embeddedServer(Netty, port = 3336, host = "127.0.0.1", module = Application::defaultModule)
     httpServer.start(wait)
-    return httpServer
+    return httpServer.engine
 }
 
 fun Application.defaultModule() {
