@@ -30,16 +30,7 @@ const tableLoading = ref<boolean>(false)
 // 表格数据
 const ruleList = ref<RuleItemVO[]>([])
 
-const newOpts = [
-  {
-    label: '专家规则',
-    key: 'expert'
-  },
-  {
-    label: '简单规则',
-    key: 'simple'
-  }
-]
+// 新建规则
 const handleNewRule = (key: string) => {
   // 抛出事件，告诉父组件触发了新建规则的操作，需要根据情况渲染表单了
   if (key === 'simple') {
