@@ -30,6 +30,8 @@ fun Application.defaultModule() {
         // for local develop
         allowHost("127.0.0.1:3000")
         allowHost("localhost:3000")
+        allowHost("127.0.0.1:5173")
+        allowHost("localhost:5173")
 
         // for product
         allowHost("127.0.0.1:3336")

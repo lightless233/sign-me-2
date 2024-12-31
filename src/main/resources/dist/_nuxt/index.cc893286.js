@@ -1,1 +1,0 @@
-import{a as r,z as a,l as n,k as o}from"./entry.df7e93f7.js";const l={__name:"index",setup(t){const e=r();return a(()=>{e.push("/rule-manager")}),(s,u)=>(o(),n("div",null," pages/index.vue "))}};export{l as default};

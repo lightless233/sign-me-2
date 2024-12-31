@@ -1,0 +1,23 @@
+{
+  "name": "sign-me-2",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@element-plus/nuxt": "^1.0.5",
+    "@nuxt/devtools": "latest",
+    "@types/node": "^18.16.19",
+    "nuxt": "^3.6.2"
+  },
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.1.9",
+    "codemirror": "^6.0.1",
+    "element-plus": "^2.3.8",
+    "vue-codemirror": "^6.1.1"
+  }
+}
