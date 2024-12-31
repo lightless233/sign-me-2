@@ -16,11 +16,11 @@ const currentRuleType = ref<string>("")
 
 <template>
   <n-grid x-gap="12" :cols="24">
-    <n-gi :span="4">
+    <n-gi :span="6">
       <!-- 侧边栏，规则列表，新增规则按钮 -->
       <rule-list @newRule="handleNewRule"/>
     </n-gi>
-    <n-gi :span="20">
+    <n-gi :span="18">
       <!-- 新建规则的表单，根据新建的时候选择的类型，展示不同的表单 -->
       <!-- TODO 是否需要换成子路由呢？ -->
       <expert-rule-form v-if="currentRuleType === 'expert'"/>
