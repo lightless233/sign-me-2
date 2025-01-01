@@ -20,6 +20,7 @@ data class CreateSignRuleRequest(
 data class UpdateSignRuleRequest(
     val ruleId: Long,
     val ruleName: String,
+    val ruleType: Long,
     val filter: String,
     val content: String,
     val status: Boolean,

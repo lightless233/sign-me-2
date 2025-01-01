@@ -2,17 +2,8 @@
 import { inject, onMounted, ref } from 'vue'
 import { useMessage } from 'naive-ui'
 import type { AxiosInstance } from 'axios'
+import type { RuleItemVO } from '@/types'
 
-interface RuleItemVO {
-  ruleId: number
-  ruleName: string
-  ruleType: number
-  filter: string
-  status: boolean
-  readableToolFlag: Array<string>
-  toolFlag: number
-  content: string
-}
 
 // 注入必要组件
 const axios = inject('axios') as AxiosInstance
@@ -21,7 +12,7 @@ const message = useMessage()
 // 定义事件
 const emits = defineEmits<{
   newRule: [ruleType: string]
-  loadRule: [ruleId: number]
+  loadRule: [ruleId: number, ruleType: string]
 }>()
 
 // tableLoading 状态
@@ -98,10 +89,10 @@ const toggleRuleStatus = async (ruleId: number, status: boolean) => {
   }
 }
 
-const loadRule = async (ruleId: number) => {
+const loadRule = async (ruleId: number, ruleType: number) => {
   console.log('loadRule: ruleId', ruleId)
   // 触发事件，告诉父组件加载指定规则的表单
-  emits('loadRule', ruleId)
+  emits('loadRule', ruleId, ruleType === 1 ? 'expert' : 'simple')
 }
 
 // 生命周期钩子
@@ -134,7 +125,7 @@ onMounted(async () => {
       </tr>
       </thead>
       <tbody>
-      <tr v-for="rule in ruleList" @click.stop.prevent="loadRule">
+      <tr v-for="rule in ruleList" @click.stop.prevent="loadRule(rule.ruleId, rule.ruleType)">
         <td>{{ rule.ruleName }}</td>
         <td>
           <n-switch
