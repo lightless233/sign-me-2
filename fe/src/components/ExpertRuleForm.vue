@@ -2,6 +2,7 @@
 import { inject, ref, watch } from 'vue'
 import type { AxiosInstance } from 'axios'
 import { useMessage } from 'naive-ui'
+import { useRuleManagerStore } from '@/stores/ruleManager.ts'
 
 // 表单数据类型定义
 interface RuleFormType {
@@ -24,10 +25,8 @@ const props = defineProps<{
   ruleId: number,
 }>()
 
-// 定义事件
-const emits = defineEmits<{
-  updateRuleList: []
-}>()
+// store
+const store = useRuleManagerStore()
 
 watch(() => props.ruleId, async (newVal, oldVal) => {
   console.log('watch: ruleId', newVal, oldVal)
@@ -77,7 +76,7 @@ const formData = ref<RuleFormType>({
 })
 
 // TODO hook CTRL+S 为保存操作
-// TODO 增加保存对应的 axios 请求
+// 保存规则，根据提供的 ruleId，判断是新增还是编辑
 const saveRule = async () => {
   console.log('saveRule: formData', formData.value)
   const payload = {
@@ -99,8 +98,7 @@ const saveRule = async () => {
       console.error('saveRule error: ', resp)
     } else {
       message.success('保存规则成功')
-      // 抛出事件，触发规则列表的刷新
-      emits("updateRuleList")
+      await store.fetchRuleList()
     }
   } catch (e) {
     message.error('保存规则失败，错误：' + JSON.stringify(e))
@@ -175,6 +173,7 @@ const saveRule = async () => {
     <template #footer>
       <n-flex justify="center">
         <n-button :disabled="disableSaveBtn" type="primary" @click.stop.prevent="saveRule">保存</n-button>
+        <n-button ghost type="primary" @click.stop.prevent="() => {message.info('规则测试功能开发中...')}" >测试</n-button>
       </n-flex>
     </template>
 

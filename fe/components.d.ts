@@ -8,7 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BlankRuleForm: typeof import('./src/components/BlankRuleForm.vue')['default']
-    ExpertRule: typeof import('./src/components/ExpertRule.vue')['default']
     ExpertRuleForm: typeof import('./src/components/ExpertRuleForm.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']
@@ -22,8 +21,6 @@ declare module 'vue' {
     NGi: typeof import('naive-ui')['NGi']
     NGrid: typeof import('naive-ui')['NGrid']
     NInput: typeof import('naive-ui')['NInput']
-    NList: typeof import('naive-ui')['NList']
-    NListItem: typeof import('naive-ui')['NListItem']
     NPopconfirm: typeof import('naive-ui')['NPopconfirm']
     NSwitch: typeof import('naive-ui')['NSwitch']
     NTable: typeof import('naive-ui')['NTable']

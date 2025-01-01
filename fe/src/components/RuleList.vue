@@ -3,6 +3,7 @@ import { inject, onMounted, ref } from 'vue'
 import { useMessage } from 'naive-ui'
 import type { AxiosInstance } from 'axios'
 import type { RuleItemVO } from '@/types'
+import { useRuleManagerStore } from '@/stores/ruleManager.ts'
 
 
 // 注入必要组件
@@ -15,11 +16,8 @@ const emits = defineEmits<{
   loadRule: [ruleId: number, ruleType: string]
 }>()
 
-// tableLoading 状态
-const tableLoading = ref<boolean>(false)
-
-// 表格数据
-const ruleList = ref<RuleItemVO[]>([])
+// store
+const store = useRuleManagerStore()
 
 // 新建规则
 const handleNewRule = (key: string) => {
@@ -33,42 +31,24 @@ const handleNewRule = (key: string) => {
 
 // 获取规则列表
 const fetchRuleList = async () => {
-  tableLoading.value = true
   try {
-    // 获取规则列表
-    const resp = (await axios.get('/api/signRule/list')).data
-    if (resp.code !== 2000) {
-      message.error('获取规则列表失败，错误：' + resp.message)
-      console.error('fetchRuleList error: ', resp)
-    } else {
-      // 规则列表填充进 table
-      console.log('fetchRuleList: resp', resp)
-      ruleList.value = resp.data
-    }
-  } catch (e) {
-    message.error('获取规则列表失败')
+    await store.fetchRuleList()
+  } catch (e: any) {
     console.error('fetchRuleList error: ', e)
-  } finally {
-    tableLoading.value = false
+    message.error('获取规则列表失败，错误：' + e.message)
   }
 }
 
 // 删除某条指定规则
 const deleteRule = async (ruleId: number) => {
-  console.log('deleteRule: ruleId', ruleId)
   try {
-    const resp = (await axios.post('/api/signRule/delete', { ruleId })).data
-    if (resp.code !== 2000) {
-      message.error('删除规则失败，错误：' + resp.message)
-      console.error('deleteRule error: ', resp)
-    } else {
-      message.success('删除规则成功')
-      // 触发重新获取规则列表
-      await fetchRuleList()
-    }
-  } catch (e) {
-    message.error('删除规则失败')
+    await store.deleteRule(ruleId)
+    message.success('删除规则成功')
+    // 如果删除成功了，重新加载规则列表
+    await store.fetchRuleList()
+  } catch (e: any) {
     console.error('deleteRule error: ', e)
+    message.error('删除规则失败，错误：' + e.message)
   }
 }
 
@@ -76,22 +56,17 @@ const deleteRule = async (ruleId: number) => {
 const toggleRuleStatus = async (ruleId: number, status: boolean) => {
   console.log('toggle: status', status)
   try {
-    const resp = (await axios.post('/api/signRule/toggle-status', { ruleId, status })).data
-    if (resp.code !== 2000) {
-      message.error('修改规则状态失败，错误：' + resp.message)
-      console.error('toggleRuleStatus error: ', resp)
-    } else {
-      message.success('修改规则状态成功')
-    }
+    await store.toggleRuleStatus(ruleId, status)
+    message.success('修改规则状态成功')
   } catch (e) {
     message.error('修改规则状态失败')
     console.error('toggleRuleStatus error: ', e)
   }
 }
 
+// 触发事件，告诉父组件加载指定规则的表单
 const loadRule = async (ruleId: number, ruleType: number) => {
   console.log('loadRule: ruleId', ruleId)
-  // 触发事件，告诉父组件加载指定规则的表单
   emits('loadRule', ruleId, ruleType === 1 ? 'expert' : 'simple')
 }
 
@@ -125,7 +100,7 @@ onMounted(async () => {
       </tr>
       </thead>
       <tbody>
-      <tr v-for="rule in ruleList" @click.stop.prevent="loadRule(rule.ruleId, rule.ruleType)">
+      <tr v-for="rule in store.ruleList" @click.stop.prevent="loadRule(rule.ruleId, rule.ruleType)">
         <td>{{ rule.ruleName }}</td>
         <td>
           <n-switch
