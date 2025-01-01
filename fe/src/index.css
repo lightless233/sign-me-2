@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 如果需要更精确地针对焦点状态 */
+.cm-focused {
+    outline: none !important;
+}
+.cm-editor .cm-content {
+    font-family: v-mono, Consolas, monospace
+}

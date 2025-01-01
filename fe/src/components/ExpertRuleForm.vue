@@ -2,6 +2,9 @@
 import { inject, ref, watch } from 'vue'
 import type { AxiosInstance } from 'axios'
 import { useMessage } from 'naive-ui'
+import {Codemirror} from "vue-codemirror"
+import {javascript} from "@codemirror/lang-javascript"
+import { autocompletion, CompletionContext } from '@codemirror/autocomplete';
 import { useRuleManagerStore } from '@/stores/ruleManager.ts'
 
 // 表单数据类型定义
@@ -107,6 +110,30 @@ const saveRule = async () => {
     disableSaveBtn.value = false
   }
 }
+
+
+
+// 预定义的补全列表
+const completions = [
+  { label: 'getById', detail: '根据ID获取数据' },
+  { label: 'getByParam', detail: '根据参数获取数据' },
+  { label: 'getAll', detail: '获取所有数据' },
+];
+
+// 补全函数
+function getCompletions(context: CompletionContext) {
+  const word = context.matchBefore(/get\w*/); // 匹配以 "get" 开头的单词
+  if (!word || word.from === word.to) return null; // 如果没有匹配到，返回 null
+
+  return {
+    from: word.from,
+    options: completions,
+  };
+}
+
+// 启用补全功能
+const autocompleteExtension = autocompletion({ override: [getCompletions] });
+const extensions = [javascript(), autocompleteExtension];
 </script>
 
 <template>
@@ -166,7 +193,14 @@ const saveRule = async () => {
 
       <n-form-item label="规则内容">
         <!-- TODO 使用 codemirror 替换 -->
-        <n-input type="textarea" v-model:value="formData.content" placeholder="" />
+<!--        <n-input type="textarea" v-model:value="formData.content" placeholder="" />-->
+        <codemirror
+          v-model="formData.content"
+          :extensions="extensions"
+          ref="cm"
+          :style="{height: '600px', width: '100%', 'font-family': 'monospace'}"
+          :indent-with-tab="true"
+        />
       </n-form-item>
     </n-form>
 
