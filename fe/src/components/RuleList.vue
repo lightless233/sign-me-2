@@ -1,13 +1,10 @@
 <script setup lang="tsx">
-import { inject, onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { useMessage } from 'naive-ui'
-import type { AxiosInstance } from 'axios'
-import type { RuleItemVO } from '@/types'
 import { useRuleManagerStore } from '@/stores/ruleManager.ts'
 
 
 // 注入必要组件
-const axios = inject('axios') as AxiosInstance
 const message = useMessage()
 
 // 定义事件
@@ -21,12 +18,8 @@ const store = useRuleManagerStore()
 
 // 新建规则
 const handleNewRule = (key: string) => {
-  // 抛出事件，告诉父组件触发了新建规则的操作，需要根据情况渲染表单了
-  if (key === 'simple') {
-    message.info('开发中...')
-    return
-  }
-  emits('newRule', key)
+  store.currentRuleType = key
+  store.resetExpertRuleFormData()
 }
 
 // 获取规则列表
@@ -64,10 +57,16 @@ const toggleRuleStatus = async (ruleId: number, status: boolean) => {
   }
 }
 
-// 触发事件，告诉父组件加载指定规则的表单
+// 告诉父组件加载指定规则的表单
 const loadRule = async (ruleId: number, ruleType: number) => {
   console.log('loadRule: ruleId', ruleId)
-  emits('loadRule', ruleId, ruleType === 1 ? 'expert' : 'simple')
+  store.currentRuleType = ruleType === 1 ? 'expert' : 'simple'
+  try {
+    await store.getRuleById(ruleId)
+  } catch (e) {
+    message.error('加载规则失败')
+    console.error('loadRule error: ', e)
+  }
 }
 
 // 生命周期钩子
@@ -124,6 +123,5 @@ onMounted(async () => {
       </tr>
       </tbody>
     </n-table>
-
   </n-card>
 </template>
