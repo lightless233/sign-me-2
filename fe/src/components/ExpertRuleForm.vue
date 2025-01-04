@@ -1,10 +1,10 @@
 <script setup lang="tsx">
-import { inject, ref, watch } from 'vue'
+import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { AxiosInstance } from 'axios'
 import { useMessage } from 'naive-ui'
-import {Codemirror} from "vue-codemirror"
-import {javascript} from "@codemirror/lang-javascript"
-import { autocompletion, CompletionContext } from '@codemirror/autocomplete';
+import { Codemirror } from 'vue-codemirror'
+import { javascript } from '@codemirror/lang-javascript'
+import { autocompletion, CompletionContext } from '@codemirror/autocomplete'
 import { useRuleManagerStore } from '@/stores/ruleManager.ts'
 
 // 表单数据类型定义
@@ -78,8 +78,26 @@ const formData = ref<RuleFormType>({
   content: ''
 })
 
-// TODO hook CTRL+S 为保存操作
+onMounted(() => {
+  // 监听 CTRL+S 事件
+  window.addEventListener('keydown', handleCTRLS)
+})
+onBeforeUnmount(() => {
+  // 移除 CTRL+S 事件
+  window.removeEventListener('keydown', handleCTRLS)
+})
+
+// hook CTRL+S 为保存操作
+const handleCTRLS = async (event: KeyboardEvent) => {
+  console.log('handleCTRLS')
+  if (event.ctrlKey && event.key === 's') {
+    event.preventDefault()
+    await saveRule()
+  }
+}
+
 // 保存规则，根据提供的 ruleId，判断是新增还是编辑
+// TODO 这个逻辑放到 store 里面
 const saveRule = async () => {
   console.log('saveRule: formData', formData.value)
   const payload = {
@@ -101,6 +119,10 @@ const saveRule = async () => {
       console.error('saveRule error: ', resp)
     } else {
       message.success('保存规则成功')
+      // 修改当前规则的 id
+      formData.value.id = resp.data.ruleId
+
+      // 重新加载规则列表
       await store.fetchRuleList()
     }
   } catch (e) {
@@ -112,28 +134,27 @@ const saveRule = async () => {
 }
 
 
-
-// 预定义的补全列表
+// TODO 完成预定义的补全列表
 const completions = [
   { label: 'getById', detail: '根据ID获取数据' },
   { label: 'getByParam', detail: '根据参数获取数据' },
-  { label: 'getAll', detail: '获取所有数据' },
-];
+  { label: 'getAll', detail: '获取所有数据' }
+]
 
-// 补全函数
+// TODO 完成补全函数
 function getCompletions(context: CompletionContext) {
-  const word = context.matchBefore(/get\w*/); // 匹配以 "get" 开头的单词
-  if (!word || word.from === word.to) return null; // 如果没有匹配到，返回 null
+  const word = context.matchBefore(/get\w*/) // 匹配以 "get" 开头的单词
+  if (!word || word.from === word.to) return null // 如果没有匹配到，返回 null
 
   return {
     from: word.from,
-    options: completions,
-  };
+    options: completions
+  }
 }
 
 // 启用补全功能
-const autocompleteExtension = autocompletion({ override: [getCompletions] });
-const extensions = [javascript(), autocompleteExtension];
+const autocompleteExtension = autocompletion({ override: [getCompletions] })
+const extensions = [javascript(), autocompleteExtension]
 </script>
 
 <template>
@@ -144,11 +165,11 @@ const extensions = [javascript(), autocompleteExtension];
       </n-form-item>
 
       <n-form-item label="规则名称">
-        <n-input v-model:value="formData.name" />
+        <n-input v-model:value="formData.name" placeholder="请输入方便自己分辨的规则名称" />
       </n-form-item>
 
       <n-form-item label="URL白名单（该规则仅对白名单内的范围生效，支持正则）">
-        <n-input v-model:value="formData.filter" />
+        <n-input v-model:value="formData.filter" placeholder="例如: www\.baidu\.com" />
       </n-form-item>
 
       <n-form-item label="生效工具范围">
@@ -192,8 +213,6 @@ const extensions = [javascript(), autocompleteExtension];
       </n-form-item>
 
       <n-form-item label="规则内容">
-        <!-- TODO 使用 codemirror 替换 -->
-<!--        <n-input type="textarea" v-model:value="formData.content" placeholder="" />-->
         <codemirror
           v-model="formData.content"
           :extensions="extensions"
@@ -207,7 +226,8 @@ const extensions = [javascript(), autocompleteExtension];
     <template #footer>
       <n-flex justify="center">
         <n-button :disabled="disableSaveBtn" type="primary" @click.stop.prevent="saveRule">保存</n-button>
-        <n-button ghost type="primary" @click.stop.prevent="() => {message.info('规则测试功能开发中...')}" >测试</n-button>
+        <n-button ghost type="primary" @click.stop.prevent="() => {message.info('规则测试功能开发中...')}">测试
+        </n-button>
       </n-flex>
     </template>
 

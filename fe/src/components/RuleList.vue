@@ -100,7 +100,7 @@ onMounted(async () => {
       </tr>
       </thead>
       <tbody>
-      <tr v-for="rule in store.ruleList" @click.stop.prevent="loadRule(rule.ruleId, rule.ruleType)">
+      <tr v-for="rule in store.ruleList" @click="loadRule(rule.ruleId, rule.ruleType)">
         <td>{{ rule.ruleName }}</td>
         <td>
           <n-switch

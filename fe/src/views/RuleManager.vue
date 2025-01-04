@@ -6,6 +6,7 @@ import SimpleRuleForm from '@/components/SimpleRuleForm.vue'
 import BlankRuleForm from '@/components/BlankRuleForm.vue'
 import { ref } from 'vue'
 
+// TODO 把这两个移动到 store 里面
 const currentRuleType = ref<string>('')
 const currentRuleId = ref<number>(-1)
 
