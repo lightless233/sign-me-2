@@ -19,7 +19,14 @@ export const useRuleManagerStore = defineStore('ruleManagerStore', () => {
       filter: '',
       status: true,
       toolFlag: ['TOOL_PROXY', 'TOOL_REPEATER'],
-      content: ''
+      content: `function main() {
+    // More see: https://github.com/lightless233/sign-me-2
+    const ts = utils.getTimestamp();
+    return [
+        {name: "timestamp", value: ts, location: ParameterType.HEADER, action: EditAction.OVERRIDE},
+        {name: "sign", value: utils.md5(ts), location: ParameterType.PARAM_URL, action: EditAction.OVERRIDE},
+    ]
+}`
     })
 
     // 重置专家规则表单数据
@@ -30,7 +37,14 @@ export const useRuleManagerStore = defineStore('ruleManagerStore', () => {
         filter: '',
         status: true,
         toolFlag: ['TOOL_PROXY', 'TOOL_REPEATER'],
-        content: ''
+        content: `function main() {
+    // More see: https://github.com/lightless233/sign-me-2
+    const ts = utils.getTimestamp();
+    return [
+        {name: "timestamp", value: ts, location: ParameterType.HEADER, action: EditAction.OVERRIDE},
+        {name: "sign", value: utils.md5(ts), location: ParameterType.PARAM_URL, action: EditAction.OVERRIDE},
+    ]
+}`
       }
     }
 
