@@ -1,6 +1,6 @@
 package me.lightless.burp
 
-const val VERSION = "1.2.0-SNAPSHOT"
+const val VERSION = "1.2.0"
 
 /**
  * Burp Parameter Location Constant
