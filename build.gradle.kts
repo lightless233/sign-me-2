@@ -76,7 +76,7 @@ val feBuild = task<Exec>("feBuild") {
 val copyFeDist = task<Copy>("copyFeDist") {
     dependsOn(feBuild)
     delete(file("src/main/resources/dist"))
-    from(file("fe/.output/public"))
+    from(file("fe/dist"))
     into(file("src/main/resources/dist"))
 }
 
