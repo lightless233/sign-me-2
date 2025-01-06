@@ -56,7 +56,7 @@ dependencies {
     // js
     implementation("org.graalvm.js:js-scriptengine:$graalvmVersion")
     implementation("org.graalvm.js:js:$graalvmVersion")
-//    implementation("org.graalvm.truffle:truffle-api:$graalvmVersion")
+    implementation("org.graalvm.truffle:truffle-api:$graalvmVersion")
 
     // OkHTTP 给JS脚本使用的
     implementation("com.squareup.okhttp3:okhttp:4.11.0")

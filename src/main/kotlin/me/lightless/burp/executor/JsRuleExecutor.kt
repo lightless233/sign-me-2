@@ -135,8 +135,13 @@ class JsRuleExecutor : IExecutor {
      */
     private val engine = GraalJSScriptEngine.create(
         null,
-        Context.newBuilder("js").allowHostAccess(HostAccess.ALL).allowHostClassLookup { true }
-            .hostClassLoader(Context::class.java.classLoader).option("js.ecmascript-version", "latest")
+        Context.newBuilder("js")
+            .allowHostAccess(HostAccess.ALL)
+            .allowHostClassLookup { true }
+            .hostClassLoader(Context::class.java.classLoader)
+            .allowExperimentalOptions(true)
+            .option("js.nashorn-compat", "true")
+            .option("js.ecmascript-version", "latest")
     )
 
     override fun execute(bindings: SimpleBindings, signRuleItem: SignRuleItem): List<EditParameter> {
