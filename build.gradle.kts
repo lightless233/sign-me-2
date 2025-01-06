@@ -66,9 +66,9 @@ dependencies {
 val feBuild = task<Exec>("feBuild") {
     workingDir("fe")
     if (System.getProperty("os.name").lowercase().contains("win")) {
-        commandLine(listOf("pnpm.cmd", "run", "generate"))
+        commandLine(listOf("pnpm.cmd", "run", "build"))
     } else {
-        commandLine(listOf("pnpm", "run", "generate"))
+        commandLine(listOf("pnpm", "run", "build"))
     }
 }
 
