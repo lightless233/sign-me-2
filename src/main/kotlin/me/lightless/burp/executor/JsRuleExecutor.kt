@@ -133,27 +133,33 @@ class JsRuleExecutor : IExecutor {
     /**
      * JS Engine
      */
+//    private val engineContext = Context.newBuilder("js")
+//        .allowHostAccess(HostAccess.ALL)
+//        .allowHostClassLookup { true }
+//        .hostClassLoader(Context::class.java.classLoader)
+//        .option("js.ecmascript-version", "latest")
+//        .build()
     private val engine = GraalJSScriptEngine.create(
         null,
-        Context.newBuilder("js")
-            .allowHostAccess(HostAccess.ALL)
-            .allowHostClassLookup { true }
-            .hostClassLoader(Context::class.java.classLoader)
-            .allowExperimentalOptions(true)
-            .option("js.nashorn-compat", "true")
-            .option("js.ecmascript-version", "latest")
+        Context.newBuilder("js").allowHostAccess(HostAccess.ALL).allowHostClassLookup { true }
+            .hostClassLoader(Context::class.java.classLoader).option("js.ecmascript-version", "latest")
     )
 
     override fun execute(bindings: SimpleBindings, signRuleItem: SignRuleItem): List<EditParameter> {
         val replaceResult = mutableListOf<EditParameter>()
 
         // 把规则名称塞进去
+//        engineContext.getBindings("js").putMember("ruleName", ruleName)
+//        bindings.forEach { key, value ->
+//            engineContext.getBindings("js").putMember(key, value)
+//        }
         val ruleName = signRuleItem.ruleName
         bindings["ruleName"] = ruleName
 
         // 执行代码
         val engineResult = try {
             engine.eval(buildJS(signRuleItem.content), bindings)
+            // engine.eval("js", buildJS(signRuleItem.content))
         } catch (ex: Exception) {
             Logger.error("Error while execute JS rule, rule name: $ruleName. Error: $ex\n${ex.stackTraceToString()}")
             return emptyList()

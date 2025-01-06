@@ -7,6 +7,7 @@ import me.lightless.burp.VERSION
 import me.lightless.burp.models.connectDatabase
 import me.lightless.burp.web.startWebServer
 import java.io.PrintWriter
+import javax.script.ScriptEngineManager
 
 @Suppress("unused")
 class BurpExtender : IBurpExtender, IExtensionStateListener {
@@ -27,6 +28,13 @@ class BurpExtender : IBurpExtender, IExtensionStateListener {
 
         // 插件名
         callbacks.setExtensionName("SignMe2 - $VERSION")
+
+        // FOR DEBUG
+        val engines = ScriptEngineManager().engineFactories
+        Logger.info("engines size: ${engines.size}")
+        for (f in engines) {
+            Logger.info(f.languageName + " " + f.engineName + " " + f.names.toString())
+        }
 
         // Connect Database
         try {

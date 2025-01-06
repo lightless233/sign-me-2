@@ -57,6 +57,9 @@ dependencies {
     implementation("org.graalvm.js:js-scriptengine:$graalvmVersion")
     implementation("org.graalvm.js:js:$graalvmVersion")
     implementation("org.graalvm.truffle:truffle-api:$graalvmVersion")
+//    implementation("org.graalvm.sdk:graal-sdk:$graalvmVersion")
+//    implementation("org.graalvm.polyglot:polyglot:$graalvmVersion")
+//    implementation("org.graalvm.polyglot:js-community:$graalvmVersion")
 
     // OkHTTP 给JS脚本使用的
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
@@ -82,7 +85,6 @@ val copyFeDist = task<Copy>("copyFeDist") {
 
 tasks {
     withType<KotlinCompile> {
-        // kotlinOptions.jvmTarget = "1.8"
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
         }
@@ -93,6 +95,7 @@ tasks {
     }
 
     shadowJar {
+        mergeServiceFiles()
         manifest {
             attributes(Pair("Main-Class", "MainKt"))
         }
