@@ -41,3 +41,14 @@ data class ToggleSignRuleStatus(
     val ruleId: Long,
     val status: Boolean,
 )
+
+/**
+ * 测试签名规则的请求
+ */
+data class TestSignRuleRequest(
+    val ruleId: Long,
+    val rawRequest: String,
+    val host: String,
+    val port: Int,
+    val protocol: String,
+)

@@ -5,6 +5,7 @@ import me.lightless.burp.HTTPListener
 import me.lightless.burp.Logger
 import me.lightless.burp.VERSION
 import me.lightless.burp.models.connectDatabase
+import me.lightless.burp.utils.BurpUtils
 import me.lightless.burp.web.startWebServer
 import java.io.PrintWriter
 import javax.script.ScriptEngineManager
@@ -21,6 +22,7 @@ class BurpExtender : IBurpExtender, IExtensionStateListener {
         }
 
         this.callbacks = callbacks
+        BurpUtils.burpCallbacks = callbacks
 
         // 初始化 logger
         Logger.stdout = PrintWriter(callbacks.stdout, true)

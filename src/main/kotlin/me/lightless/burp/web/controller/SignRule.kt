@@ -4,16 +4,21 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import me.lightless.burp.Logger
 import me.lightless.burp.ToolFlag
+import me.lightless.burp.executor.JsRuleExecutor
+import me.lightless.burp.items.SignRuleItem
+import me.lightless.burp.models.SignRuleDAO
+import me.lightless.burp.models.SignRuleModel
 import me.lightless.burp.service.SignRuleService
+import me.lightless.burp.utils.BurpUtils
 import me.lightless.burp.web.ApiResult
-import me.lightless.burp.web.request.CreateSignRuleRequest
-import me.lightless.burp.web.request.DeleteSignRuleRequest
-import me.lightless.burp.web.request.ToggleSignRuleStatus
-import me.lightless.burp.web.request.UpdateSignRuleRequest
+import me.lightless.burp.web.request.*
 import me.lightless.burp.web.response.CreateSignRuleResponse
 import me.lightless.burp.web.response.UpdateSignRuleResponse
 import me.lightless.burp.web.vo.SignRuleVO
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.SQLException
 
@@ -151,5 +156,68 @@ fun Route.signRuleRoutes() {
         } catch (ex: SQLException) {
             return@post call.respond(ApiResult.err<Nothing>("Error when toggle rule status. Error: $ex\n${ex.stackTraceToString()}"))
         }
+    }
+
+    /**
+     * 测试规则
+     */
+    post("/test-rule") {
+        val request = call.receive<TestSignRuleRequest>()
+        // TODO HERE!
+        if (request.rawRequest.isBlank()) {
+            return@post call.respond(ApiResult.err<Nothing>("rawRequest is required."))
+        }
+        if (request.host.isBlank()) {
+            return@post call.respond(ApiResult.err<Nothing>("host is required."))
+        }
+        if (request.protocol.isBlank() || request.protocol !in listOf("http", "https")) {
+            return@post call.respond(ApiResult.err<Nothing>("protocol is required and must be 'http' or 'https'."))
+        }
+        if (request.port < 1 || request.port > 65535) {
+            return@post call.respond(ApiResult.err<Nothing>("port is required and must be in 1..65535."))
+        }
+        if (request.ruleId < 1) {
+            return@post call.respond(ApiResult.err<Nothing>("ruleId is required."))
+        }
+
+        // 根据规则 ID 获取规则内容
+        val signRuleItem = transaction {
+            SignRuleDAO.find {
+                SignRuleModel.isDeleted eq false and
+                        (SignRuleModel.status eq true) and
+                        (SignRuleModel.id eq request.ruleId)
+            }.firstOrNull()?.let {
+                SignRuleItem(
+                    it.ruleName,
+                    it.filter,
+                    it.content,
+                    it.status,
+                    it.ruleType,
+                    it.toolFlag,
+                    it.createdTime,
+                    it.updatedTime
+                )
+            }
+        }
+        if (signRuleItem == null) {
+            return@post call.respond(ApiResult.err<Nothing>("RuleId not exist or status is false."))
+        }
+
+        // 构建一个 httpService 对象
+        val tempHTTPService =
+            BurpUtils.burpCallbacks.helpers.buildHttpService(request.host, request.port, request.protocol)
+
+        // 构建 bindings 对象
+        val bindings = BurpUtils.buildBinding(request.rawRequest.toByteArray(), tempHTTPService)
+
+        // 执行 JS 代码，获取执行结果，这里先临时新建一个 JS 引擎，后续再优化
+        // TODO 如果后续添加了 SimpleRule，需要判断是哪种规则
+        val jsRuleExecutor = JsRuleExecutor()
+        val editParameters = jsRuleExecutor.execute(bindings, signRuleItem)
+
+        // 修改 HTTP 包，并获取修改好的结果
+        val newRequestMessage = BurpUtils.editHTTPRequestMessage(editParameters, request.rawRequest.toByteArray())
+
+        return@post call.respond(ApiResult.ok(mapOf("requestMessage" to newRequestMessage.toString(Charsets.UTF_8))))
     }
 }

@@ -97,4 +97,11 @@ object SignRuleService {
         }?.id?.value
     }
 
+    /**
+     * 测试签名规则
+     */
+    fun testSignRule(ruleId: Long, rawRequest: String) = transaction {
+        // TODO
+    }
+
 }

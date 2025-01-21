@@ -94,6 +94,9 @@ class HTTPListener(private val callbacks: IBurpExtenderCallbacks) : IHttpListene
         editHTTPMessage(editParameterList, messageInfo)
     }
 
+    /**
+     * TODO 使用 utils 中的方法替换
+     */
     private fun buildBinding(messageInfo: IHttpRequestResponse): SimpleBindings {
         val bindings = SimpleBindings()
         val rawRequest = messageInfo.request
@@ -161,7 +164,7 @@ class HTTPListener(private val callbacks: IBurpExtenderCallbacks) : IHttpListene
     }
 
     /**
-     * 修改 HTTP 消息
+     * 修改 HTTP 消息 TODO 移动到 BurpUtils 中
      */
     private fun editHTTPMessage(
         editParameters: List<EditParameter>, messageInfo: IHttpRequestResponse
