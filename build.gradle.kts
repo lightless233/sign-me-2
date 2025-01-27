@@ -18,7 +18,7 @@ plugins {
 }
 
 group = "me.lightless.burp"
-version = "1.2.0"
+version = "1.2.1-SNAPSHOT"
 
 val ktorServerVersion = "3.0.3"
 val exposedVersion = "0.57.0"

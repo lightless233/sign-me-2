@@ -18,9 +18,11 @@ declare module 'vue' {
     NFlex: typeof import('naive-ui')['NFlex']
     NForm: typeof import('naive-ui')['NForm']
     NFormItem: typeof import('naive-ui')['NFormItem']
+    NFormItemGi: typeof import('naive-ui')['NFormItemGi']
     NGi: typeof import('naive-ui')['NGi']
     NGrid: typeof import('naive-ui')['NGrid']
     NInput: typeof import('naive-ui')['NInput']
+    NModal: typeof import('naive-ui')['NModal']
     NPopconfirm: typeof import('naive-ui')['NPopconfirm']
     NSwitch: typeof import('naive-ui')['NSwitch']
     NTable: typeof import('naive-ui')['NTable']
@@ -28,5 +30,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     RuleList: typeof import('./src/components/RuleList.vue')['default']
     SimpleRuleForm: typeof import('./src/components/SimpleRuleForm.vue')['default']
+    TestRuleModal: typeof import('./src/components/TestRuleModal.vue')['default']
   }
 }

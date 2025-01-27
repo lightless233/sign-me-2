@@ -6,6 +6,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import { autocompletion, CompletionContext } from '@codemirror/autocomplete'
 import { useRuleManagerStore } from '@/stores/ruleManager.ts'
 import type { ExpertRuleFormType } from '@/types'
+import TestRuleModal from '@/components/TestRuleModal.vue'
 
 
 // 注入必要的组件
@@ -14,6 +15,9 @@ const message = useMessage()
 
 // 保存按钮的状态
 const disableSaveBtn = ref<boolean>(false)
+
+// 显示规则测试模态框的变量
+const showTestRuleModal = ref<boolean>(false)
 
 onMounted(() => {
   // 监听 CTRL+S 事件
@@ -86,7 +90,10 @@ const completions = [
   { label: 'utils.getHeaderByName', detail: '根据名称获取Header' },
   { label: 'utils.getCookieByName', detail: '根据名称获取Cookie' },
   { label: 'utils.sortParameters', detail: '对参数列表进行排序' },
-  { label: 'utils.getTimestamp', detail: '获取当前时间戳，当参数为1时，获取10位精确到秒的时间戳，否则获取13位精确到毫秒的时间戳' },
+  {
+    label: 'utils.getTimestamp',
+    detail: '获取当前时间戳，当参数为1时，获取10位精确到秒的时间戳，否则获取13位精确到毫秒的时间戳'
+  },
   { label: 'utils.convParametersToMap', detail: '将参数列表转换为Map' },
 
   // HTTP客户端函数
@@ -101,22 +108,22 @@ const completions = [
 // TODO 完成补全函数
 function getCompletions(context: CompletionContext) {
   // 匹配以字母开头的单词
-  const word = context.matchBefore(/[\w.]*/);
-  if (!word || word.from === word.to && !context.explicit) return null;
+  const word = context.matchBefore(/[\w.]*/)
+  if (!word || word.from === word.to && !context.explicit) return null
 
   // 过滤出与当前输入匹配的补全项
   const filteredCompletions = completions.filter(completion => {
-    return completion.label.startsWith(word.text);
-  });
+    return completion.label.startsWith(word.text)
+  })
 
   // 如果没有匹配的补全项，返回 null
-  if (filteredCompletions.length === 0) return null;
+  if (filteredCompletions.length === 0) return null
 
   // 返回补全建议
   return {
     from: word.from,
     options: filteredCompletions
-  };
+  }
 }
 
 // 启用补全功能
@@ -193,11 +200,13 @@ const extensions = [javascript(), autocompleteExtension]
     <template #footer>
       <n-flex justify="center">
         <n-button :disabled="disableSaveBtn" type="primary" @click.stop.prevent="saveRule">保存</n-button>
-        <n-button ghost type="primary" @click.stop.prevent="() => {message.info('规则测试功能开发中...')}">测试
+        <n-button ghost type="primary" @click.stop.prevent="() => {showTestRuleModal=true}">测试规则
         </n-button>
       </n-flex>
     </template>
 
   </n-card>
+
+  <test-rule-modal v-model:visible="showTestRuleModal" :ruleId="store.expertRuleFormData.id" />
 </template>
 
